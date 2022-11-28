@@ -20,10 +20,10 @@ head(diabetes_raw)
 ```
 
 ##Clean data
-Here I cleaned the data by getting rid of the zeros for variables such as glucose, blood pressure, etc. The raw dataset have 768 observations, and after cleaning the data there's 392 observations left, which should still be enough for data analysis. 
+Here I cleaned the data by getting rid of the zeros for variables such as glucose, blood pressure, etc. The raw dataset have 768 observations, and after cleaning the data there's  observations left. I didn't touch on insulin null values, because I'm not sure what the unit is, so I will not likely to use that variable.  
 ```{r}
 clean_diabetes <- diabetes_raw %>% 
-  filter(Glucose != 0 & BloodPressure != 0 & SkinThickness != 0 & Insulin != 0 & BMI != 0 )
+  filter(Glucose != 0 & BloodPressure != 0 & BMI != 0 )
 ```
 
 ##Data visualization
@@ -33,13 +33,18 @@ Patients with diabetes are correlated with higher blood glucose level. So let us
 
 ggplot(data = clean_diabetes, aes(x = Outcome, y = Glucose, group = cut_width(Outcome, 1)))+ geom_boxplot()
 
+ggplot(data = clean_diabetes, aes(x = Glucose, color = cut_width(Outcome, 1))) + 
+  geom_histogram(position="identity") 
+
 ```
 
+From this plot, we can see that there is a clear separation of glucose level between diabetic and non-diabetics, where diabetic patients have a higher glucose level than non-diabetic patients. Or if we look at the histogram, non-diabetic patients seems to be more concentrated at 100 level, where diabetic patients seems to be more spreadout at the right side of the chart, and most are above 100. 
+
 #Glucose VS BMI
-:
+BMI is also a variable that's closely correlated to diabetes:
 ```{r}
 
-ggplot(data = clean_diabetes, aes(x = BMI, y = Glucose, color=Outcome)) + 
+ggplot(data = clean_diabetes, aes(x = Glucose, y = BMI, color=factor(Outcome))) + 
   geom_point()
 
 ```
