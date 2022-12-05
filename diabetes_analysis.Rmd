@@ -43,8 +43,8 @@ From this plot, we can see that there is a clear separation of glucose level bet
 
 ```{r}
 
-# glucose_outcome_model <- lm(data = clean_diabetes, Glucose ~ Outcome)
-# get_regression_table(glucose_outcome_model)
+glucose_outcome_model <- lm(data = clean_diabetes, Glucose ~ Outcome)
+get_regression_table(glucose_outcome_model)
 
 clean_diabetes_outcome <- clean_diabetes
 clean_diabetes_outcome$Outcome[clean_diabetes_outcome$Outcome == 1] <- "Diabetic"
