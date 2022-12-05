@@ -43,8 +43,8 @@ From this plot, we can see that there is a clear separation of glucose level bet
 
 ```{r}
 
-glucose_outcome_model <- lm(data = clean_diabetes, Glucose ~ Outcome)
-get_regression_table(glucose_outcome_model)
+# glucose_outcome_model <- lm(data = clean_diabetes, Glucose ~ Outcome)
+# get_regression_table(glucose_outcome_model)
 
 clean_diabetes_outcome <- clean_diabetes
 clean_diabetes_outcome$Outcome[clean_diabetes_outcome$Outcome == 1] <- "Diabetic"
@@ -55,30 +55,33 @@ null_distribution_diabetes <- clean_diabetes_outcome %>%
   hypothesize(null = "independence") %>%
   generate(reps = 1000, type = "permute") %>%
   calculate(stat = "diff in means", order = c("Diabetic", "Non-Diabetic"))
-null_distribution_diabetes
+
+visualise(null_distribution_diabetes)
 
 ```
 
-```{r}
+here i'm trying to conduct a hypothesis test on this data set through generating a null distribution and use a histogram to visualize how the simulation based null distribution looks like
 
-visualize(null_distribution_diabetes)
+```{r}
 
 obs_diff_means <- clean_diabetes_outcome %>% 
   specify(formula = Glucose ~ Outcome) %>% 
   calculate(stat = "diff in means", order = c("Diabetic", "Non-Diabetic"))
 obs_diff_means
 
-```
-
-
-```{r}
-
 visualize(null_distribution_diabetes, bins = 30) + 
   shade_p_value(obs_stat = obs_diff_means, direction = "both")
 
+```
+We can visualize the p-value in the null distribution through this method by comparing it to the observed difference in mean, which is around 31. We do this through shade_p_value(). We can see that the slope falls at the very right of null distribution, so we have a very small p-value. Let's make sure what the exact p-value is here:
+
+
+```{r}
 null_distribution_diabetes %>% 
   get_p_value(obs_stat = obs_diff_means, direction = "both")
 ```
+
+the p-value here is so small that's the software can't show the number. It's not 0, but it's very small. So based on this, we can reject the null hypothesis. We have a significant evidence to suggest that there's a significant relationship between glucose and whether or not the person is diabetic. 
 
 #Glucose VS BMI
 BMI is also a variable that's closely correlated to diabetes:
