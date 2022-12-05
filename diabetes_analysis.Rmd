@@ -41,32 +41,16 @@ ggplot(data = clean_diabetes, aes(x = Glucose, color = cut_width(Outcome, 1))) +
 
 From this plot, we can see that there is a clear separation of glucose level between diabetic and non-diabetics, where diabetic patients have a higher glucose level than non-diabetic patients. Or if we look at the histogram, non-diabetic patients seems to be more concentrated at 100 level, where diabetic patients seems to be more spreadout at the right side of the chart, and most are above 100. 
 
-Since the numbers are pretty big, so I would have to log10 the data 
-
-```{r}
-
-
-
-```
-
 ```{r}
 
 glucose_outcome_model <- lm(data = clean_diabetes, Glucose ~ Outcome)
 get_regression_table(glucose_outcome_model)
 
-# clean_diabetes %>% 
-#   group_by(Outcome) %>% 
-#   summarise(n = n(), mean_glucose = mean(Glucose), median_glucose = median(Glucose), std_dev = sd(Glucose))
-
 clean_diabetes_outcome <- clean_diabetes
 clean_diabetes_outcome$Outcome[clean_diabetes_outcome$Outcome == 1] <- "Diabetic"
 clean_diabetes_outcome$Outcome[clean_diabetes_outcome$Outcome == 0] <- "Non-Diabetic"
 
-# movies_sample %>% 
-#   group_by(genre) %>% 
-#   summarize(n = n(), mean_rating = mean(rating), std_dev = sd(rating))
-
-null_distribution_diabetes <- test %>%
+null_distribution_diabetes <- clean_diabetes_outcome %>%
   specify(formula = Glucose ~ Outcome) %>%
   hypothesize(null = "independence") %>%
   generate(reps = 1000, type = "permute") %>%
@@ -90,7 +74,7 @@ obs_diff_means
 ```{r}
 
 visualize(null_distribution_diabetes, bins = 30) + 
-  shade_p_value(obs_stat = obs_diff_means, direction = "right")
+  shade_p_value(obs_stat = obs_diff_means, direction = "both")
 
 null_distribution_diabetes %>% 
   get_p_value(obs_stat = obs_diff_means, direction = "both")
